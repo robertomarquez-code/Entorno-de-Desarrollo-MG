@@ -32,8 +32,8 @@ public class ServicioPedidos {
         if (lineas == null || lineas.isEmpty()) throw new IllegalArgumentException("lineas");
 
         //Crea un cliente sacado del repositorio buscándolo por id. Si no lo encuentra lanza un error
-        Clientes c = repoClientes.buscarId(idCliente);
-        if (c == null) throw new IllegalArgumentException("Customer not found: " + idCliente);
+        Clientes cliente = repoClientes.buscarId(idCliente);
+        if (cliente == null) throw new IllegalArgumentException("Customer not found: " + idCliente);
 
         // Creamos un pedido y lo incluimos en la linea
         Pedido pedido = new Pedido(idPedido, idCliente, pais, urgente);
@@ -81,7 +81,7 @@ public class ServicioPedidos {
             }
         }
 
-        if (c.esVip()) {
+        if (cliente.esVip()) {
             if (codigoDescuento == null || codigoDescuento.isBlank() || !"10%menos".equalsIgnoreCase(codigoDescuento)) {
                 descuento += (int) Math.round(subtotal * 0.03);
             }
@@ -94,7 +94,7 @@ public class ServicioPedidos {
 
         StringBuilder recibo = new StringBuilder();
         recibo.append("PEDIDO ").append(idPedido).append("\n");
-        recibo.append("CLIENTE ").append(c.getNombre()).append("\n");
+        recibo.append("CLIENTE ").append(cliente.getNombre()).append("\n");
         recibo.append("LINEAS ").append(pedido.getLineas().size()).append("\n");
         recibo.append("SUBTOTAL ").append(subtotal).append("\n");
         recibo.append("ENVIO ").append(enviar).append("\n");
@@ -115,7 +115,7 @@ public class ServicioPedidos {
         public final Pedido order;
         public final int subtotalCent;
         public final int envioCent;
-        public final int envoltorioRegaloCent;
+        public final int envoltorioCent;
         public final int descuentoCent;
         public final int totalCents;
         public final String reciboText;
@@ -124,16 +124,16 @@ public class ServicioPedidos {
             this.order = pedido;
             this.subtotalCent = subtotalCents;
             this.envioCent = envioCent;
-            this.envoltorioRegaloCent = envoltorioRegaloCent;
+            this.envoltorioCent = envoltorioRegaloCent;
             this.descuentoCent = descuentoCent;
             this.totalCents = totalCents;
             this.reciboText = reciboText;
         }
     }
 
-    public static List<PedirLinea> lines(PedirLinea... ls) {
+    public static List<PedirLinea> lines(PedirLinea... lineas) {
         List<PedirLinea> out = new ArrayList<>();
-        for (PedirLinea l : ls) out.add(l);
+        for (PedirLinea l : lineas) out.add(l);
         return out;
     }
 }
